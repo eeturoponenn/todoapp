@@ -14,8 +14,9 @@ load_dotenv()  # This loads the variables from .env
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'app.db')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['DEBUG'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
@@ -137,21 +138,30 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect(url_for('login'))
-    
+        try:
+            hashed_password = bcrypt.generate_password_hash(form.password.data)
+            new_user = User(username=form.username.data, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            app.logger.info(f"User registered: {form.username.data}")
+            return redirect(url_for('login'))
+        except Exception as e:
+            app.logger.error(f"Registration error: {str(e)}")
+            db.session.rollback()
+            return 'Registration failed', 500
     return render_template('register.html', form=form)
 
 migrate = Migrate(app, db)
 
-def init_db():
+def create_tables():
     with app.app_context():
         db.create_all()
 
+# Call the function to create tables
+create_tables()
+
 if __name__ == '__main__':
     app.run()
+
+print(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
