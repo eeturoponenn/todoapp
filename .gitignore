@@ -1,8 +1,9 @@
 # created by virtualenv automatically
 env/
-.env
-instance/
+.instance/
 app.db
 node_modules/
+__pycache__
 *.pyc
-__pycache__/
+.env
+venv/
