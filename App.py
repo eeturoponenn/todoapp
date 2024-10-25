@@ -158,10 +158,6 @@ def create_tables():
     with app.app_context():
         db.create_all()
 
-# Call the function to create tables
-create_tables()
-
 if __name__ == '__main__':
-    app.run()
-
-print(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
+    create_tables()
+    app.run(debug=True)
