@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <title>Task Master</title>
+    <title>Update Task - Task Master</title>
 {% endblock %}
 
 {% block body %}
-    <div class="content">
-        <h1 style="text-align: center">Update Task</h1>
-
-        <div class="form">
-            <form action="/update/{{task.id}}" method="POST">
-                <input type="text" name="content" id="content" value="{{task.content}}">
-                <input type="submit" value="Update">
-            </form>
+    <div class="max-w-2xl mx-auto p-4">
+        <h1 class="text-3xl font-bold text-center mb-6">Update Task</h1>
+        <form action="/update/{{task.id}}" method="POST" class="flex justify-center">
+            <input type="text" name="content" id="content" value="{{task.content}}" class="border rounded-l py-2 px-4" placeholder="Update Task">
+            <input type="submit" value="Update Task" class="bg-blue-500 text-white rounded-r py-2 px-4 hover:bg-blue-600">
+        </form>
+        <div class="text-center mt-6">
+            <a href="{{ url_for('index') }}" class="text-blue-500 hover:underline">Back to Tasks</a>
         </div>
     </div>
 {% endblock %}
